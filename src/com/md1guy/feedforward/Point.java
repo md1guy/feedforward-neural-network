@@ -4,7 +4,7 @@ public class Point {
     private double[] input;
     private double[] expectedOutput;
 
-    Point() {
+    public Point() {
         this.input = new double[2];
         this.expectedOutput = new double[2];
 

@@ -2,29 +2,31 @@ package com.md1guy.feedforward;
 
 public class NeuralNetwork {
     private int inputLayerNeurons;
-    private int hiddenLayerNeurons;
     private int outputLayerNeurons;
     private Matrix ihWeights;
     private Matrix hoWeights;
 
+    private int iterations;
+    private int errors;
+
     NeuralNetwork(int inputLayerNeurons, int hiddenLayerNeurons, int outputLayerNeurons) {
         this.inputLayerNeurons = inputLayerNeurons;
-        this.hiddenLayerNeurons = hiddenLayerNeurons;
         this.outputLayerNeurons = outputLayerNeurons;
         this.ihWeights = new Matrix(inputLayerNeurons + 1, hiddenLayerNeurons);
         this.hoWeights = new Matrix(hiddenLayerNeurons + 1, outputLayerNeurons);
+
+        this.iterations = 0;
+        this.errors = 0;
 
         this.ihWeights.randomize();
         this.hoWeights.randomize();
     }
 
-    double[] guess(double[] inputData) {
+    private double[] guess(double[] inputData) {
         Matrix input = Matrix.transpose(new Matrix(inputData));
         if(input.getValues().length != inputLayerNeurons) throw new RuntimeException("Incorrect inputData array size, must equal number of input neurons.");
 
-        input = expandWithBias(input);
-
-        Layer hiddenLayer = new Layer(input, ihWeights);
+        Layer hiddenLayer = new Layer(expandWithBias(input), ihWeights);
         Layer outputLayer = new Layer(expandWithBias(hiddenLayer.output), hoWeights);
 
         double[] outputArray = new double[outputLayerNeurons];
@@ -35,8 +37,14 @@ public class NeuralNetwork {
         return outputArray;
     }
 
-    void train(double[] inputData, double[] expectedOutputData) {
+    public void train(double[] inputData, double[] expectedOutputData) {
         double[] guess = guess(inputData);
+
+        iterations++;
+    }
+
+    public double getErrorPercentage() {
+        return (errors / iterations);
     }
 
     private Matrix expandWithBias(Matrix inputs) {

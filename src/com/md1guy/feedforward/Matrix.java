@@ -66,7 +66,7 @@ public class Matrix {
     public void randomize() {
         for (int i = 0; i < this.rows; i++) {
             for (int j = 0; j < this.cols; j++) {
-                this.values[i][j] = Math.random();
+                this.values[i][j] = Math.random() * 2 - 1;
             }
         }
     }

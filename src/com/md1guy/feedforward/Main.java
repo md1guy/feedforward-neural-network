@@ -3,7 +3,7 @@ package com.md1guy.feedforward;
 public class Main {
 
     public static void main(String[] args) {
-        NeuralNetwork nn = new NeuralNetwork(2, 5, 2);
+        NeuralNetwork nn = new NeuralNetwork(2, 500, 2);
 
         double[] testInputData = {0, 0};
 

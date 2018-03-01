@@ -2,14 +2,14 @@ package com.md1guy.feedforward;
 
 public class NeuralNetwork {
     private int inputLayerNeurons;
-    private int hiddenLayerNeurons;
+    //private int hiddenLayerNeurons;
     private int outputLayerNeurons;
     private Matrix ihWeights;
     private Matrix hoWeights;
 
     NeuralNetwork(int inputLayerNeurons, int hiddenLayerNeurons, int outputLayerNeurons) {
         this.inputLayerNeurons = inputLayerNeurons;
-        this.hiddenLayerNeurons = hiddenLayerNeurons;
+        //this.hiddenLayerNeurons = hiddenLayerNeurons;
         this.outputLayerNeurons = outputLayerNeurons;
         this.ihWeights = new Matrix(inputLayerNeurons + 1, hiddenLayerNeurons);
         this.hoWeights = new Matrix(hiddenLayerNeurons + 1, outputLayerNeurons);
@@ -22,9 +22,7 @@ public class NeuralNetwork {
         Matrix input = Matrix.transpose(new Matrix(inputData));
         if(input.getValues().length != inputLayerNeurons) throw new RuntimeException("Incorrect inputData array size, must equal number of input neurons.");
 
-        input = expandWithBias(input);
-
-        Layer hiddenLayer = new Layer(input, ihWeights);
+        Layer hiddenLayer = new Layer(expandWithBias(input), ihWeights);
         Layer outputLayer = new Layer(expandWithBias(hiddenLayer.output), hoWeights);
 
         double[] outputArray = new double[outputLayerNeurons];

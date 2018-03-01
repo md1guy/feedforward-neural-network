@@ -1,0 +1,6 @@
+
+out/production/feedforward-neural-network/com/md1guy/feedforward/Func.class
+out/production/feedforward-neural-network/com/md1guy/feedforward/Layer.class
+*.class
+*.xml
+.idea/description.html

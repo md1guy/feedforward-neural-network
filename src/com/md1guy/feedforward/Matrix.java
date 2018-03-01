@@ -1,8 +1,5 @@
 package com.md1guy.feedforward;
 
-import java.util.function.DoubleFunction;
-import java.util.function.Function;
-
 public class Matrix {
 
     private int rows;

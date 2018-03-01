@@ -37,4 +37,8 @@ public class NeuralNetwork {
 
         return outputArray;
     }
+
+    void train(double[] inputData, double[] expectedOutputData) {
+        double[] guess = guess(inputData);
+    }
 }

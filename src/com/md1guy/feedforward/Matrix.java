@@ -80,7 +80,7 @@ public class Matrix {
         }
     }
 
-    // returns values with random values in range [0, 1]
+    // returns matrix with random values in range [0, 1]
     public static Matrix random(int rows, int cols) {
 
         Matrix matrix = new Matrix(rows, cols);

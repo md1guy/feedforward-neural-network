@@ -5,12 +5,11 @@ public class Layer {
     Matrix weights;
     Matrix output;
 
-    Layer(Matrix input, Matrix weights, double bias) {
+    Layer(Matrix input, Matrix weights) {
         this.input = input;
         this.weights = weights;
 
-        output = Matrix.add(Matrix.mul(Matrix.transpose(weights), input), bias);
-        //output = Matrix.mul(Matrix.transpose(weights), input);
+        output = Matrix.mul(Matrix.transpose(weights), input);
         output.map(sigm);
     }
 

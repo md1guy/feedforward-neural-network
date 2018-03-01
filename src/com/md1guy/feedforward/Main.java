@@ -5,7 +5,7 @@ public class Main {
     public static void main(String[] args) {
         NeuralNetwork nn = new NeuralNetwork(2, 5, 2);
 
-        double[] testInputData = {1, 0};
+        double[] testInputData = {0, 0};
 
         double[] testOutputData = nn.guess(testInputData);
 

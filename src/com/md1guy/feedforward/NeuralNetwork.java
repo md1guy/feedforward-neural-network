@@ -1,36 +1,33 @@
 package com.md1guy.feedforward;
 
 public class NeuralNetwork {
-    private Matrix inputLayerNeurons;
-    private Matrix hiddenLayerNeurons;
-    private Matrix outputLayerNeurons;
+    private int inputLayerNeurons;
+    private int hiddenLayerNeurons;
+    private int outputLayerNeurons;
     private Matrix ihWeights;
     private Matrix hoWeights;
-    private double[] biases = new double[2];
 
     NeuralNetwork(int inputLayerNeurons, int hiddenLayerNeurons, int outputLayerNeurons) {
-        this.inputLayerNeurons = new Matrix(inputLayerNeurons, 1);
-        this.hiddenLayerNeurons = new Matrix(hiddenLayerNeurons, 1);
-        this.outputLayerNeurons = new Matrix(outputLayerNeurons, 1);
-        this.ihWeights = new Matrix(inputLayerNeurons, hiddenLayerNeurons);
-        this.hoWeights = new Matrix(hiddenLayerNeurons, outputLayerNeurons);
+        this.inputLayerNeurons = inputLayerNeurons;
+        this.hiddenLayerNeurons = hiddenLayerNeurons;
+        this.outputLayerNeurons = outputLayerNeurons;
+        this.ihWeights = new Matrix(inputLayerNeurons + 1, hiddenLayerNeurons);
+        this.hoWeights = new Matrix(hiddenLayerNeurons + 1, outputLayerNeurons);
 
         this.ihWeights.randomize();
         this.hoWeights.randomize();
-
-        for (int i = 0; i < biases.length; i++) {
-            biases[i] = Math.random();
-        }
     }
 
     double[] guess(double[] inputData) {
         Matrix input = Matrix.transpose(new Matrix(inputData));
-        if(input.getValues().length != inputLayerNeurons.getValues().length) throw new RuntimeException("Incorrect inputData array size, must equal number of input neurons.");
+        if(input.getValues().length != inputLayerNeurons) throw new RuntimeException("Incorrect inputData array size, must equal number of input neurons.");
 
-        Layer hiddenLayer = new Layer(input, ihWeights, biases[0]);
-        Layer outputLayer = new Layer(hiddenLayer.output, hoWeights, biases[1]);
+        input = expandWithBias(input);
 
-        double[] outputArray = new double[outputLayerNeurons.getValues().length];
+        Layer hiddenLayer = new Layer(input, ihWeights);
+        Layer outputLayer = new Layer(expandWithBias(hiddenLayer.output), hoWeights);
+
+        double[] outputArray = new double[outputLayerNeurons];
         for (int i = 0; i < outputArray.length; i++) {
             outputArray[i] = outputLayer.output.getValue(i, 0);
         }
@@ -40,5 +37,17 @@ public class NeuralNetwork {
 
     void train(double[] inputData, double[] expectedOutputData) {
         double[] guess = guess(inputData);
+    }
+
+    private Matrix expandWithBias(Matrix inputs) {
+        double[][] inputsArray = new double[inputs.getValues().length + 1][1];
+
+        for (int i = 0; i < inputsArray.length - 1; i++) {
+            inputsArray[i][0] = inputs.getValue(i, 0);
+        }
+
+        inputsArray[inputsArray.length - 1][0] = 1;
+
+        return  new Matrix(inputsArray);
     }
 }

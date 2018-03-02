@@ -28,10 +28,7 @@ public class NeuralNetwork {
         inputLayer.setOutputs(Matrix.transpose(new Matrix(inputData)));
 
         // feed forward input data
-        hiddenLayer.setInputs(inputLayer.getOutputs()); // it's fine
         hiddenLayer.feedForward();
-
-        outputLayer.setInputs(inputLayer.getOutputs());
         outputLayer.feedForward();
 
         // convert output to 1d array

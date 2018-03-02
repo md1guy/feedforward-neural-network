@@ -68,9 +68,8 @@ public class Layer {
     void feedForward() {
         outputs = Matrix.mul(weights, prevLayer.getOutputs());
         outputs = Matrix.add(outputs, biases);
-        Func sigm = (x) -> (1 / (1 + Math.pow(Math.E, (-1 * x))));
         outputs.map(sigm);
     }
 
-//    private Func fastsigm = (x) -> x / (1 + Math.abs(x));
+    Func sigm = (x) -> (1 / (1 + Math.pow(Math.E, (-1 * x))));
 }

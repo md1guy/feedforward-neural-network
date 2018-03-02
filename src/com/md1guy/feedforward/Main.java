@@ -3,20 +3,35 @@ package com.md1guy.feedforward;
 public class Main {
 
     public static void main(String[] args) {
-        NeuralNetwork nn = new NeuralNetwork(2, 10, 2);
+        NeuralNetwork nn = new NeuralNetwork(2, 2, 1);
 
-        Point[] trainingSet = new Point[100000];
+        double[][] trainingSet = {
+                {0, 0, 0},
+                {0, 1, 1},
+                {1, 0, 1},
+                {1, 1, 0}
+        };
 
-        for (int i = 0; i < trainingSet.length; i++) {
-            trainingSet[i] = new Point();
+        for (int i = 0; i < 500000; i++) {
+            int index = (int)(Math.random() * 4);
 
-            nn.train(trainingSet[i].getInput(), trainingSet[i].getExpectedOutput());
+            double[] input = {trainingSet[index][0], trainingSet[index][1]};
+            double[] expect = {trainingSet[index][2]};
 
-            double[] guess = nn.guess(trainingSet[i].getInput());
-
-            System.out.println("{" + trainingSet[i].getInput()[0] + ", " + trainingSet[i].getInput()[1]
-                    + "} ---> {"
-                    + guess[0] + ", " + guess[1] + "}");
+            nn.train(input, expect);
         }
+
+        double[][] testData = {
+                {0, 0},         // 0
+                {0, 1},         // 1
+                {1, 0},         // 1
+                {1, 1}          // 1
+        };
+
+        System.out.println("guess: " + nn.guess(testData[0])[0] + ", 0 expected");
+        System.out.println("guess: " + nn.guess(testData[1])[0] + ", 1 expected");
+        System.out.println("guess: " + nn.guess(testData[2])[0] + ", 1 expected");
+        System.out.println("guess: " + nn.guess(testData[3])[0] + ", 0 expected");
+
     }
 }

@@ -6,7 +6,7 @@ public class NeuralNetwork {
     private Layer inputLayer;
     private Layer hiddenLayer;
     private Layer outputLayer;
-    private double learnRate = 0.01;
+    private double learnRate = 0.1;
 
     public NeuralNetwork(int inputLayerNeuronsCount, int hiddenLayerNeuronsCount, int outputLayerNeuronsCount) {
 
@@ -63,7 +63,11 @@ public class NeuralNetwork {
         Matrix ihDeltaWeights = Matrix.mul(Matrix.scale(hiddenGradient, learnRate), Matrix.transpose(inputLayer.getOutputs()));
 
         outputLayer.setWeights(Matrix.add(outputLayer.getWeights(), Matrix.transpose(hoDeltaWeights)));
+        outputLayer.setBiases(Matrix.add(outputLayer.getBiases(), outputGradient));
         hiddenLayer.setWeights(Matrix.add(hiddenLayer.getWeights(), Matrix.transpose(ihDeltaWeights)));
+        hiddenLayer.setBiases(Matrix.add(hiddenLayer.getBiases(), hiddenGradient));
+
+        //System.out.println("guess - " + guess.getValue(0, 0) + " | expected: " + expected.getValue(0, 0));
     }
 }
 

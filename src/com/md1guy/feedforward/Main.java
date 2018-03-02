@@ -3,7 +3,7 @@ package com.md1guy.feedforward;
 public class Main {
 
     public static void main(String[] args) {
-        NeuralNetwork nn = new NeuralNetwork(2, 100, 1);
+        NeuralNetwork nn = new NeuralNetwork(2,2, 1);
 
         double[][] trainingSet = {
                 {0, 0, 0},
@@ -12,7 +12,7 @@ public class Main {
                 {1, 1, 0}
         };
 
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 50000; i++) {
             int index = (int)(Math.random() * 4);
 
             double[] input = {trainingSet[index][0], trainingSet[index][1]};

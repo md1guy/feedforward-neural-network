@@ -9,7 +9,7 @@ public class Layer {
 
     Layer(int prevLayerNeurons, int curLayerNeurons, Layer prevLayer) {
         this.inputs = new Matrix(curLayerNeurons, 1);
-        this.weights = new Matrix(prevLayerNeurons, curLayerNeurons);
+        this.weights = new Matrix(curLayerNeurons, prevLayerNeurons);
         this.outputs = new Matrix(curLayerNeurons, 1);
         this.biases = new Matrix(curLayerNeurons, 1);
         this.prevLayer = prevLayer;
@@ -66,7 +66,7 @@ public class Layer {
     }
 
     void feedForward() {
-        outputs = Matrix.mul(Matrix.transpose(weights), prevLayer.getOutputs());
+        outputs = Matrix.mul(weights, prevLayer.getOutputs());
         outputs = Matrix.add(outputs, biases);
         Func sigm = (x) -> (1 / (1 + Math.pow(Math.E, (-1 * x))));
         outputs.map(sigm);

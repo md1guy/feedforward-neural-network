@@ -51,7 +51,7 @@ public class NeuralNetwork {
         Matrix expected = Matrix.transpose(new Matrix(expectedOutputData));
 
         Matrix outputErrors = Matrix.sub(expected, guess);
-        Matrix hiddenErrors = Matrix.mul(outputLayer.getWeights(), outputErrors);
+        Matrix hiddenErrors = Matrix.mul(Matrix.transpose(outputLayer.getWeights()), outputErrors);
 
         // backpropagation part
         Func dsigm = (x) -> x * (1 - x); // sigmoid derivative function
@@ -65,9 +65,9 @@ public class NeuralNetwork {
         Matrix hoDeltaWeights = Matrix.mul(outputGradient, Matrix.transpose(hiddenLayer.getOutputs()));
         Matrix ihDeltaWeights = Matrix.mul(hiddenGradient, Matrix.transpose(inputLayer.getOutputs()));
 
-        outputLayer.setWeights(Matrix.add(outputLayer.getWeights(), Matrix.transpose(hoDeltaWeights)));
+        outputLayer.setWeights(Matrix.add(outputLayer.getWeights(), hoDeltaWeights));
         outputLayer.setBiases(Matrix.add(outputLayer.getBiases(), outputGradient));
-        hiddenLayer.setWeights(Matrix.add(hiddenLayer.getWeights(), Matrix.transpose(ihDeltaWeights)));
+        hiddenLayer.setWeights(Matrix.add(hiddenLayer.getWeights(), ihDeltaWeights));
         hiddenLayer.setBiases(Matrix.add(hiddenLayer.getBiases(), hiddenGradient));
 
         //System.out.println("guess - " + guess.getValue(0, 0) + " | expected: " + expected.getValue(0, 0));

@@ -59,8 +59,11 @@ public class NeuralNetwork {
         Matrix outputGradient = Matrix.hadm(outputErrors, Matrix.map(outputLayer.getOutputs(), dsigm));
         Matrix hiddenGradient = Matrix.hadm(hiddenErrors, Matrix.map(hiddenLayer.getOutputs(), dsigm));
 
-        Matrix hoDeltaWeights = Matrix.mul(Matrix.scale(outputGradient, learnRate), Matrix.transpose(hiddenLayer.getOutputs()));
-        Matrix ihDeltaWeights = Matrix.mul(Matrix.scale(hiddenGradient, learnRate), Matrix.transpose(inputLayer.getOutputs()));
+        outputGradient = Matrix.scale(outputGradient, learnRate);
+        hiddenGradient = Matrix.scale(hiddenGradient, learnRate);
+
+        Matrix hoDeltaWeights = Matrix.mul(outputGradient, Matrix.transpose(hiddenLayer.getOutputs()));
+        Matrix ihDeltaWeights = Matrix.mul(hiddenGradient, Matrix.transpose(inputLayer.getOutputs()));
 
         outputLayer.setWeights(Matrix.add(outputLayer.getWeights(), Matrix.transpose(hoDeltaWeights)));
         outputLayer.setBiases(Matrix.add(outputLayer.getBiases(), outputGradient));

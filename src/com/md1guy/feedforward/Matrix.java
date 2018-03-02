@@ -1,9 +1,6 @@
 package com.md1guy.feedforward;
 
 public class Matrix {
-
-    private int rows;
-    private int cols;
     private double[][] values;
 
     // get particular value from matrix values array
@@ -26,23 +23,21 @@ public class Matrix {
         this.values = values;
     }
 
+    public void setValues(Matrix matrix) {
+        this.values = matrix.getValues();
+    }
+
     // new values filled with 0's
     public Matrix(int rows, int cols) {
-
-        this.rows = rows;
-        this.cols = cols;
         this.values = new double[rows][cols];
     }
 
     // new values based on 2d array
     public Matrix(double[][] values) {
+        this.values = new double[values.length][values[0].length];
 
-        this.rows = values.length;
-        this.cols = values[0].length;
-        this.values = new double[this.rows][this.cols];
-
-        for (int i = 0; i < this.rows; i++) {
-            for (int j = 0; j < this.cols; j++) {
+        for (int i = 0; i < values.length; i++) {
+            for (int j = 0; j < values[0].length; j++) {
                 this.values[i][j] = values[i][j];
             }
         }
@@ -51,21 +46,18 @@ public class Matrix {
     // new matrix(vector) based on 1d array
     public Matrix(double[] vector) {
 
-        this.rows = 1;
-        this.cols = vector.length;
-        this.values = new double[this.rows][this.cols];
+        this.values = new double[1][vector.length];
 
-        for (int i = 0; i < this.rows; i++) {
-            for (int j = 0; j < this.cols; j++) {
-                this.values[i][j] = vector[j];
-            }
+        for (int j = 0; j < vector.length; j++) {
+            this.values[0][j] = vector[j];
         }
     }
 
+
     // randomize values
     public void randomize() {
-        for (int i = 0; i < this.rows; i++) {
-            for (int j = 0; j < this.cols; j++) {
+        for (int i = 0; i < values.length; i++) {
+            for (int j = 0; j < values[0].length; j++) {
                 this.values[i][j] = Math.random() * 2 - 1;
             }
         }
@@ -73,8 +65,8 @@ public class Matrix {
 
     // fill matrix values with particular double value
     public void fill(double value) {
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
+        for (int i = 0; i < values.length; i++) {
+            for (int j = 0; j < values[0].length; j++) {
                 values[i][j] = value;
             }
         }
@@ -96,10 +88,10 @@ public class Matrix {
 
     // returns transposed matrix
     public static Matrix transpose(Matrix matrix) {
-        Matrix transposed = new Matrix(matrix.cols, matrix.rows);
+        Matrix transposed = new Matrix(matrix.values[0].length, matrix.values.length);
 
-        for (int i = 0; i < transposed.rows; i++) {
-            for (int j = 0; j < transposed.cols; j++) {
+        for (int i = 0; i < transposed.values.length; i++) {
+            for (int j = 0; j < transposed.values[0].length; j++) {
                 transposed.values[i][j] = matrix.values[j][i];
             }
         }
@@ -109,15 +101,14 @@ public class Matrix {
 
     // A + B
     public static Matrix add(Matrix A, Matrix B) {
-
-        if (B.rows != A.rows || B.cols != A.cols) {
+        if (B.values.length != A.values.length || B.values[0].length != A.values[0].length) {
             throw new RuntimeException("Illegal matrix dimensions.");
         }
 
-        Matrix C = new Matrix(A.rows, A.cols);
+        Matrix C = new Matrix(A.values.length, A.values[0].length);
 
-        for (int i = 0; i < A.rows; i++) {
-            for (int j = 0; j < A.cols; j++) {
+        for (int i = 0; i < A.values.length; i++) {
+            for (int j = 0; j < A.values[0].length; j++) {
                 C.values[i][j] = A.values[i][j] + B.values[i][j];
             }
         }
@@ -127,10 +118,10 @@ public class Matrix {
 
     // A + n
     public static Matrix add(Matrix matrix, double n) {
-        Matrix C = new Matrix(matrix.rows, matrix.cols);
+        Matrix C = new Matrix(matrix.values.length, matrix.values[0].length);
 
-        for (int i = 0; i < matrix.rows; i++) {
-            for (int j = 0; j < matrix.cols; j++) {
+        for (int i = 0; i < matrix.values.length; i++) {
+            for (int j = 0; j < matrix.values[0].length; j++) {
                 C.values[i][j] = matrix.values[i][j] + n;
             }
         }
@@ -140,15 +131,14 @@ public class Matrix {
 
     // A - B
     public static Matrix sub(Matrix A, Matrix B) {
-
-        if (B.rows != A.rows || B.cols != A.cols) {
+        if (B.values.length != A.values.length || B.values[0].length != A.values[0].length) {
             throw new RuntimeException("Illegal matrix dimensions.");
         }
 
-        Matrix C = new Matrix(A.rows, A.cols);
+        Matrix C = new Matrix(A.values.length, A.values[0].length);
 
-        for (int i = 0; i < A.rows; i++) {
-            for (int j = 0; j < A.cols; j++) {
+        for (int i = 0; i < A.values.length; i++) {
+            for (int j = 0; j < A.values[0].length; j++) {
                 C.values[i][j] = A.values[i][j] - B.values[i][j];
             }
         }
@@ -158,10 +148,10 @@ public class Matrix {
 
     // A - n
     public static Matrix sub(Matrix matrix, double n) {
-        Matrix C = new Matrix(matrix.rows, matrix.cols);
+        Matrix C = new Matrix(matrix.values.length, matrix.values[0].length);
 
-        for (int i = 0; i < matrix.rows; i++) {
-            for (int j = 0; j < matrix.cols; j++) {
+        for (int i = 0; i < matrix.values.length; i++) {
+            for (int j = 0; j < matrix.values[0].length; j++) {
                 C.values[i][j] = matrix.values[i][j] - n;
             }
         }
@@ -171,11 +161,10 @@ public class Matrix {
 
     // A * n
     public static Matrix scale(Matrix matrix, double scalar) {
+        Matrix C = new Matrix(matrix.values.length, matrix.values[0].length);
 
-        Matrix C = new Matrix(matrix.rows, matrix.cols);
-
-        for (int i = 0; i < matrix.rows; i++) {
-            for (int j = 0; j < matrix.cols; j++) {
+        for (int i = 0; i < matrix.values.length; i++) {
+            for (int j = 0; j < matrix.values[0].length; j++) {
                 C.values[i][j] = matrix.values[i][j] * scalar;
             }
         }
@@ -185,15 +174,14 @@ public class Matrix {
 
     // A .* B (Hadamard product)
     public static Matrix hadm(Matrix A, Matrix B) {
-
-        if (B.rows != A.rows || B.cols != A.cols) {
+        if (B.values.length != A.values.length || B.values[0].length != A.values[0].length) {
             throw new RuntimeException("Illegal matrix dimensions.");
         }
 
-        Matrix C = new Matrix(A.rows, A.cols);
+        Matrix C = new Matrix(A.values.length, A.values[0].length);
 
-        for (int i = 0; i < A.rows; i++) {
-            for (int j = 0; j < A.cols; j++) {
+        for (int i = 0; i < A.values.length; i++) {
+            for (int j = 0; j < A.values[0].length; j++) {
                 C.values[i][j] = A.values[i][j] * B.values[i][j];
             }
         }
@@ -204,15 +192,15 @@ public class Matrix {
     // A * B
     public static Matrix mul(Matrix A, Matrix B) {
 
-        if (A.cols != B.rows) {
+        if (A.values[0].length != B.values.length) {
             throw new RuntimeException("Illegal matrix dimensions.");
         }
 
-        Matrix C = new Matrix(A.rows, B.cols);
+        Matrix C = new Matrix(A.values.length, B.values[0].length);
 
-        for (int i = 0; i < C.rows; i++) {
-            for (int j = 0; j < C.cols; j++) {
-                for (int k = 0; k < A.cols; k++) {
+        for (int i = 0; i < C.values.length; i++) {
+            for (int j = 0; j < C.values[0].length; j++) {
+                for (int k = 0; k < A.values[0].length; k++) {
                     C.values[i][j] += (A.values[i][k] * B.values[k][j]);
                 }
             }
@@ -223,17 +211,27 @@ public class Matrix {
 
     // maps every element of the matrix with function, passed as parameter
     public void map(Func function) {
-        for (int i = 0; i < this.rows; i++) {
-            for (int j = 0; j < this.cols; j++) {
+        for (int i = 0; i < this.values.length; i++) {
+            for (int j = 0; j < this.values[0].length; j++) {
                 this.values[i][j] = function.fn(this.values[i][j]);
             }
         }
     }
 
+    public static Matrix map(Matrix matrix, Func function) {
+        for (int i = 0; i < matrix.values.length; i++) {
+            for (int j = 0; j < matrix.values[0].length; j++) {
+                matrix.values[i][j] = function.fn(matrix.values[i][j]);
+            }
+        }
+
+        return matrix;
+    }
+
     // prints matrix
     public void print() {
-        for (int i = 0; i < this.rows; i++) {
-            for (int j = 0; j < this.cols; j++) {
+        for (int i = 0; i < this.values.length; i++) {
+            for (int j = 0; j < this.values[0].length; j++) {
                 System.out.print(this.values[i][j] + " ");
             }
             System.out.println();

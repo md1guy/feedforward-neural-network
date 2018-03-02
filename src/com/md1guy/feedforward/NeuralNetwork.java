@@ -1,63 +1,81 @@
 package com.md1guy.feedforward;
 
 public class NeuralNetwork {
-    private int inputLayerNeurons;
-    private int outputLayerNeurons;
-    private Matrix ihWeights;
-    private Matrix hoWeights;
-    private Matrix ihBiases;
-    private Matrix hoBiases;
+    private int inputLayerNeuronsCount;
+    private int outputLayerNeuronsCount;
+    private Layer inputLayer;
+    private Layer hiddenLayer;
+    private Layer outputLayer;
+    private double learnRate = 0.01;
 
-    public NeuralNetwork(int inputLayerNeurons, int hiddenLayerNeurons, int outputLayerNeurons) {
-        this.inputLayerNeurons = inputLayerNeurons;
-        this.outputLayerNeurons = outputLayerNeurons;
+    public NeuralNetwork(int inputLayerNeuronsCount, int hiddenLayerNeuronsCount, int outputLayerNeuronsCount) {
 
-        this.ihWeights = new Matrix(inputLayerNeurons, hiddenLayerNeurons);
-        this.hoWeights = new Matrix(hiddenLayerNeurons, outputLayerNeurons);
-        this.ihBiases = new Matrix(hiddenLayerNeurons, 1);
-        this.hoBiases = new Matrix(outputLayerNeurons, 1);
+        this.inputLayerNeuronsCount = inputLayerNeuronsCount;
+        this.outputLayerNeuronsCount = outputLayerNeuronsCount;
 
-        this.ihWeights.randomize();
-        this.hoWeights.randomize();
-        this.ihBiases.randomize();
-        this.hoBiases.randomize();
+        inputLayer = new Layer(inputLayerNeuronsCount);
+        hiddenLayer = new Layer(inputLayerNeuronsCount, hiddenLayerNeuronsCount, inputLayer);
+        outputLayer = new Layer(hiddenLayerNeuronsCount, outputLayerNeuronsCount, hiddenLayer);
     }
 
     public double[] guess(double[] inputData) {
-        Matrix input = Matrix.transpose(new Matrix(inputData));
-        if(input.getValues().length != inputLayerNeurons)
+
+        double[] guess = new double[outputLayerNeuronsCount];
+
+        if (inputData.length != inputLayerNeuronsCount)
             throw new RuntimeException("Incorrect inputData array size, must equal number of input neurons.");
 
-        Layer hiddenLayer = new Layer(input, ihWeights, ihBiases);
-        Layer outputLayer = new Layer(hiddenLayer.output, hoWeights, hoBiases);
+        inputLayer.setOutputs(Matrix.transpose(new Matrix(inputData)));
 
-        double[] outputArray = new double[outputLayerNeurons];
-        for (int i = 0; i < outputArray.length; i++) {
-            outputArray[i] = outputLayer.output.getValue(i, 0);
+        // feed forward input data
+        hiddenLayer.setInputs(inputLayer.getOutputs()); // it's fine
+        hiddenLayer.feedForward();
+
+        outputLayer.setInputs(inputLayer.getOutputs());
+        outputLayer.feedForward();
+
+        // convert output to 1d array
+        for (int i = 0; i < guess.length; i++) {
+            guess[i] = outputLayer.getOutputs().getValue(i, 0);
         }
 
-        return outputArray;
+        return guess;
     }
 
     public void train(double[] inputData, double[] expectedOutputData) {
-        if(expectedOutputData.length != outputLayerNeurons)
+        if (expectedOutputData.length != outputLayerNeuronsCount)
             throw new RuntimeException("Incorrect expectedOutputData array size, must equal number of output neurons.");
 
-        Matrix hiddenErrors = calculateErrors(inputData, expectedOutputData);
-    }
-
-    Matrix calculateErrors(double[] inputData, double[] expectedOutputData) {
-        Matrix guess = new Matrix(guess(inputData));
-        guess = Matrix.transpose(guess);
-        Matrix expected = new Matrix(expectedOutputData);
-        expected = Matrix.transpose(expected);
+        // error calculation part
+        Matrix guess = Matrix.transpose(new Matrix(guess(inputData)));
+        Matrix expected = Matrix.transpose(new Matrix(expectedOutputData));
 
         Matrix outputErrors = Matrix.sub(expected, guess);
+        Matrix hiddenErrors = Matrix.mul(outputLayer.getWeights(), outputErrors);
 
-        outputErrors.print();
+        // backpropagation part
+        Func dsigm = (x) -> x * (1 - x); // sigmoid derivative function
 
-        Matrix hiddenErrors = Matrix.mul(hoWeights, outputErrors);
+        Matrix outputGradient = Matrix.hadm(outputErrors, Matrix.map(outputLayer.getOutputs(), dsigm));
+        Matrix hiddenGradient = Matrix.hadm(hiddenErrors, Matrix.map(hiddenLayer.getOutputs(), dsigm));
 
-        return hiddenErrors;
+        Matrix hoDeltaWeights = Matrix.mul(Matrix.scale(outputGradient, learnRate), Matrix.transpose(hiddenLayer.getOutputs()));
+        Matrix ihDeltaWeights = Matrix.mul(Matrix.scale(hiddenGradient, learnRate), Matrix.transpose(inputLayer.getOutputs()));
+
+        outputLayer.setWeights(Matrix.add(outputLayer.getWeights(), Matrix.transpose(hoDeltaWeights)));
+        hiddenLayer.setWeights(Matrix.add(hiddenLayer.getWeights(), Matrix.transpose(ihDeltaWeights)));
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -7,10 +7,10 @@ public class Layer {
     private Matrix weights;
     private Matrix outputs;
     private Matrix biases;
-    Layer prevLayer;
+    private Layer prevLayer;
 
     Layer(int curLayerNeurons, Layer prevLayer) {
-        this.inputs = new Matrix(prevLayer.getOutputs().getValues().length, 1);
+        //this.inputs = new Matrix(prevLayer.getOutputs().getValues().length, 1);
         this.weights = new Matrix(curLayerNeurons, prevLayer.getOutputs().getValues().length);
         this.outputs = new Matrix(curLayerNeurons, 1);
         this.biases = new Matrix(curLayerNeurons, 1);
@@ -70,7 +70,7 @@ public class Layer {
     void feedForward() {
         inputs = prevLayer.getOutputs();
         outputs = mul(weights, inputs);
-        outputs = add(outputs, biases);
+        outputs.add(biases);
         outputs.map(sigm);
     }
 

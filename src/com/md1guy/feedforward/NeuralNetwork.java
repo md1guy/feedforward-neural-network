@@ -66,15 +66,11 @@ public class NeuralNetwork {
         Matrix hoDeltaWeights = mul(oGradient, transpose(hiddenLayer.getOutputs()));
         Matrix ihDeltaWeights = mul(hGradient, transpose(inputLayer.getOutputs()));
 
-        Matrix adjustedWeightsHO = add(outputLayer.getWeights(), hoDeltaWeights);
-        Matrix adjustedWeightsIH = add(hiddenLayer.getWeights(), ihDeltaWeights);
-        Matrix adjustedBiasesHO = add(outputLayer.getBiases(), oGradient);
-        Matrix adjustedBiasesIH = add(hiddenLayer.getBiases(), hGradient);
+        outputLayer.getWeights().add(hoDeltaWeights);
+        hiddenLayer.getWeights().add(ihDeltaWeights);
 
-        outputLayer.setWeights(adjustedWeightsHO);
-        hiddenLayer.setWeights(adjustedWeightsIH);
-        outputLayer.setBiases(adjustedBiasesHO);
-        hiddenLayer.setBiases(adjustedBiasesIH);
+        outputLayer.getBiases().add(oGradient);
+        hiddenLayer.getBiases().add(hGradient);
 
         //System.out.println("guess - " + guess.getValue(0, 0) + " | expected: " + expected.getValue(0, 0));
     }

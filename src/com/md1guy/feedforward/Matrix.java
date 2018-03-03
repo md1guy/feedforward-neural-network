@@ -116,6 +116,19 @@ public class Matrix {
         return C;
     }
 
+    // Adding Matrix B to current Matrix values
+    public void add(Matrix B) {
+        if (B.values.length != values.length || B.values[0].length != values[0].length) {
+            throw new RuntimeException("Illegal matrix dimensions.");
+        }
+
+        for (int i = 0; i < values.length; i++) {
+            for (int j = 0; j < values[0].length; j++) {
+                values[i][j] += B.values[i][j];
+            }
+        }
+    }
+
     // A + n
     public static Matrix add(Matrix matrix, double n) {
         Matrix C = new Matrix(matrix.values.length, matrix.values[0].length);

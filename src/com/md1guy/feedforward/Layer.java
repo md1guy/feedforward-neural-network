@@ -9,9 +9,9 @@ public class Layer {
     private Matrix biases;
     Layer prevLayer;
 
-    Layer(int prevLayerNeurons, int curLayerNeurons, Layer prevLayer) {
-        this.inputs = new Matrix(curLayerNeurons, 1);
-        this.weights = new Matrix(curLayerNeurons, prevLayerNeurons);
+    Layer(int curLayerNeurons, Layer prevLayer) {
+        this.inputs = new Matrix(prevLayer.getOutputs().getValues().length, 1);
+        this.weights = new Matrix(curLayerNeurons, prevLayer.getOutputs().getValues().length);
         this.outputs = new Matrix(curLayerNeurons, 1);
         this.biases = new Matrix(curLayerNeurons, 1);
         this.prevLayer = prevLayer;

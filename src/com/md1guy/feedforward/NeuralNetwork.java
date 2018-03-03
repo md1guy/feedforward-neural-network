@@ -16,8 +16,8 @@ public class NeuralNetwork {
         this.outputLayerNeuronsCount = outputLayerNeuronsCount;
 
         inputLayer = new Layer(inputLayerNeuronsCount);
-        hiddenLayer = new Layer(inputLayerNeuronsCount, hiddenLayerNeuronsCount, inputLayer);
-        outputLayer = new Layer(hiddenLayerNeuronsCount, outputLayerNeuronsCount, hiddenLayer);
+        hiddenLayer = new Layer(hiddenLayerNeuronsCount, inputLayer);
+        outputLayer = new Layer(outputLayerNeuronsCount, hiddenLayer);
     }
 
     public double[] guess(double[] inputData) {

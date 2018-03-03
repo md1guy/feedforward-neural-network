@@ -12,7 +12,7 @@ public class Main {
                 {1, 1, 0}
         };
 
-        for (int i = 0; i < 50000; i++) {
+        for (int i = 0; i < 1000; i++) {
             int index = (int)(Math.random() * 4);
 
             double[] input = {trainingSet[index][0], trainingSet[index][1]};
@@ -23,15 +23,15 @@ public class Main {
 
         double[][] testData = {
                 {0, 0},         // 0
+                {1, 1},         // 0
                 {0, 1},         // 1
-                {1, 0},         // 1
-                {1, 1}          // 1
+                {1, 0}          // 1
         };
 
         System.out.println("guess: " + nn.guess(testData[0])[0] + ", 0 expected");
-        System.out.println("guess: " + nn.guess(testData[1])[0] + ", 1 expected");
+        System.out.println("guess: " + nn.guess(testData[1])[0] + ", 0 expected");
         System.out.println("guess: " + nn.guess(testData[2])[0] + ", 1 expected");
-        System.out.println("guess: " + nn.guess(testData[3])[0] + ", 0 expected");
+        System.out.println("guess: " + nn.guess(testData[3])[0] + ", 1 expected");
 
     }
 }

@@ -1,5 +1,7 @@
 package com.md1guy.feedforward;
 
+import static com.md1guy.feedforward.Matrix.*;
+
 public class Layer {
     private Matrix inputs;
     private Matrix weights;
@@ -66,8 +68,9 @@ public class Layer {
     }
 
     void feedForward() {
-        outputs = Matrix.mul(weights, prevLayer.getOutputs());
-        outputs = Matrix.add(outputs, biases);
+        inputs = prevLayer.getOutputs();
+        outputs = mul(weights, inputs);
+        outputs = add(outputs, biases);
         outputs.map(sigm);
     }
 

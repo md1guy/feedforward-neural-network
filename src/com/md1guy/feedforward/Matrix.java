@@ -1,5 +1,7 @@
 package com.md1guy.feedforward;
 
+import java.util.Random;
+
 public class Matrix {
     private double[][] values;
 
@@ -54,11 +56,21 @@ public class Matrix {
     }
 
 
+    static Matrix fromArray(double[] arr) {
+        Matrix m = new Matrix(arr.length, 1);
+        for (int i = 0; i < arr.length; i++) {
+            m.values[i][0] = arr[i];
+        }
+        return m;
+    }
+
     // randomize values
     public void randomize() {
+        Random random = new Random();
+
         for (int i = 0; i < values.length; i++) {
             for (int j = 0; j < values[0].length; j++) {
-                this.values[i][j] = Math.random() * 2 - 1;
+                this.values[i][j] = random.nextFloat() * 2 - 1; //Math.random() * 2 - 1;
             }
         }
     }

@@ -1,9 +1,11 @@
 package com.md1guy.feedforward;
 
+import java.util.Random;
+
 public class Main {
 
     public static void main(String[] args) {
-        NeuralNetwork nn = new NeuralNetwork(2,2, 1);
+        NeuralNetwork nn = new NeuralNetwork(2,4, 1);
 
         double[][] trainingSet = {
                 {0, 0, 0},
@@ -12,8 +14,10 @@ public class Main {
                 {1, 1, 0}
         };
 
-        for (int i = 0; i < 100000; i++) {
-            int index = (int)(Math.random() * 4);
+        Random random = new Random();
+
+        for (int i = 0; i < 5000; i++) {
+            int index = random.nextInt(4);
 
             double[] input = {trainingSet[index][0], trainingSet[index][1]};
             double[] expect = {trainingSet[index][2]};

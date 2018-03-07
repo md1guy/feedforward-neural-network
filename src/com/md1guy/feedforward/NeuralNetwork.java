@@ -45,31 +45,32 @@ public class NeuralNetwork {
         if (expectedOutputData.length != outputLayerNeuronsCount)
             throw new RuntimeException("Incorrect expectedOutputData array size, must equal number of output neurons.");
 
-        // error calculation
-        Matrix guess = transpose(new Matrix(guess(inputData)));
-        Matrix expected = transpose(new Matrix(expectedOutputData));
-
-        Matrix outputErrors = sub(expected, guess);
-        Matrix hiddenErrors = mul(transpose(outputLayer.getWeights()), outputErrors);
+        Matrix guess = fromArray(guess(inputData));
+        Matrix expected = fromArray(expectedOutputData);
 
         // backpropagation
+        Matrix outputErrors = sub(expected, guess);
+
         Func dsigm = (x) -> x * (1 - x); // sigmoid derivative function
 
         Matrix oGradient = map(outputLayer.getOutputs(), dsigm);
         oGradient = hadm(oGradient, outputErrors);
         oGradient = scale(oGradient, learnRate);
 
+        Matrix hoDeltaWeights = mul(oGradient, transpose(hiddenLayer.getOutputs()));
+
+        outputLayer.getWeights().add(hoDeltaWeights);
+        outputLayer.getBiases().add(oGradient);
+
+        Matrix hiddenErrors = mul(transpose(outputLayer.getWeights()), outputErrors);
+
         Matrix hGradient = map(hiddenLayer.getOutputs(), dsigm);
         hGradient = hadm(hGradient, hiddenErrors);
         hGradient = scale(hGradient, learnRate);
 
-        Matrix hoDeltaWeights = mul(oGradient, transpose(hiddenLayer.getOutputs()));
         Matrix ihDeltaWeights = mul(hGradient, transpose(inputLayer.getOutputs()));
 
-        outputLayer.getWeights().add(hoDeltaWeights);
         hiddenLayer.getWeights().add(ihDeltaWeights);
-
-        outputLayer.getBiases().add(oGradient);
         hiddenLayer.getBiases().add(hGradient);
 
         //System.out.println("guess - " + guess.getValue(0, 0) + " | expected: " + expected.getValue(0, 0));

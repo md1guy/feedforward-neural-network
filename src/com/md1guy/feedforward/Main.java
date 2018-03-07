@@ -12,7 +12,7 @@ public class Main {
                 {1, 1, 0}
         };
 
-        for (int i = 0; i < 100000; i++) {
+        for (int i = 0; i < 25000; i++) {
             int index = (int)(Math.random() * 4);
 
             double[] input = {trainingSet[index][0], trainingSet[index][1]};

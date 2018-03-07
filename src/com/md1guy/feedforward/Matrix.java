@@ -53,6 +53,16 @@ public class Matrix {
         }
     }
 
+    // vector from 1d array
+    static Matrix fromArray(double[] arr) {
+        Matrix m = new Matrix(arr.length, 1);
+
+        for (int i = 0; i < arr.length; i++) {
+            m.values[i][0] = arr[i];
+        }
+        return m;
+    }
+
 
     // randomize values
     public void randomize() {

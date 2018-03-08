@@ -7,7 +7,10 @@ public class Layer {
     private Matrix weights;
     private Matrix outputs;
     private Matrix biases;
+
     private Layer prevLayer;
+
+    private Matrix errors;
 
     Layer(int curLayerNeurons, Layer prevLayer) {
         //this.inputs = new Matrix(prevLayer.getOutputs().getValues().length, 1);
@@ -21,10 +24,7 @@ public class Layer {
     }
 
     Layer(int curLayerNeurons) {
-        this.inputs = null;
-        this.weights = null;
         this.outputs = new Matrix(curLayerNeurons, 1);
-        this.biases = null;
     }
 
     public Matrix getInputs() {
@@ -74,5 +74,25 @@ public class Layer {
         outputs.map(sigm);
     }
 
-    Func sigm = (x) -> (1 / (1 + Math.pow(Math.E, (-1 * x))));
+    void backpropagate(Matrix errors, double learnRate) {
+        if(weights == null) return;
+
+        this.errors = errors;
+
+        Matrix gradient = map(outputs, dsigm);
+        gradient = hadm(gradient, errors);
+        gradient = scale(gradient, learnRate);
+
+        Matrix deltaWeights = mul(gradient, transpose(prevLayer.outputs));
+
+        weights.add(deltaWeights);
+        biases.add(gradient);
+
+        Matrix prevLayerErrors = mul(transpose(weights), errors);
+
+        prevLayer.backpropagate(prevLayerErrors, learnRate);
+    }
+
+    Func sigm = (x) -> (1 / (1 + Math.pow(Math.E, (-1 * x))));  // sigmoid function
+    Func dsigm = (x) -> x * (1 - x);                            // derivative sigmoid function
 }

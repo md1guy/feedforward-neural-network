@@ -6,18 +6,30 @@ public class NeuralNetwork {
     private int inputLayerNeuronsCount;
     private int outputLayerNeuronsCount;
     private Layer inputLayer;
-    private Layer hiddenLayer;
+    private Layer[] hiddenLayers;
     private Layer outputLayer;
     private double learnRate = 0.1;
 
-    public NeuralNetwork(int inputLayerNeuronsCount, int hiddenLayerNeuronsCount, int outputLayerNeuronsCount) {
+    public NeuralNetwork(int inputLayerNeuronsCount, int[] hiddenLayersNeuronsCounts, int outputLayerNeuronsCount) {
 
         this.inputLayerNeuronsCount = inputLayerNeuronsCount;
         this.outputLayerNeuronsCount = outputLayerNeuronsCount;
 
         inputLayer = new Layer(inputLayerNeuronsCount);
-        hiddenLayer = new Layer(hiddenLayerNeuronsCount, inputLayer);
-        outputLayer = new Layer(outputLayerNeuronsCount, hiddenLayer);
+        hiddenLayers = new Layer[hiddenLayersNeuronsCounts.length];
+        hiddenLayers[0] = new Layer(hiddenLayersNeuronsCounts[0], inputLayer);
+
+        if(hiddenLayers.length > 1) {
+            for (int i = 1; i < hiddenLayers.length; i++) {
+                hiddenLayers[i] = new Layer(hiddenLayersNeuronsCounts[i], hiddenLayers[i - 1]);
+            }
+        }
+
+        outputLayer = new Layer(outputLayerNeuronsCount, hiddenLayers[hiddenLayersNeuronsCounts.length - 1]);
+    }
+
+    public void setLearnRate(double learnRate) {
+        this.learnRate = learnRate;
     }
 
     public double[] guess(double[] inputData) {
@@ -30,7 +42,9 @@ public class NeuralNetwork {
         inputLayer.setOutputs(transpose(new Matrix(inputData)));
 
         // feed forward input data
-        hiddenLayer.feedForward();
+        for (int i = 0; i < hiddenLayers.length; i++) {
+            hiddenLayers[i].feedForward();
+        }
         outputLayer.feedForward();
 
         // convert output to 1d array
@@ -51,27 +65,7 @@ public class NeuralNetwork {
         // backpropagation
         Matrix outputErrors = sub(expected, guess);
 
-        Func dsigm = (x) -> x * (1 - x); // sigmoid derivative function
-
-        Matrix oGradient = map(outputLayer.getOutputs(), dsigm);
-        oGradient = hadm(oGradient, outputErrors);
-        oGradient = scale(oGradient, learnRate);
-
-        Matrix hoDeltaWeights = mul(oGradient, transpose(hiddenLayer.getOutputs()));
-
-        outputLayer.getWeights().add(hoDeltaWeights);
-        outputLayer.getBiases().add(oGradient);
-
-        Matrix hiddenErrors = mul(transpose(outputLayer.getWeights()), outputErrors);
-
-        Matrix hGradient = map(hiddenLayer.getOutputs(), dsigm);
-        hGradient = hadm(hGradient, hiddenErrors);
-        hGradient = scale(hGradient, learnRate);
-
-        Matrix ihDeltaWeights = mul(hGradient, transpose(inputLayer.getOutputs()));
-
-        hiddenLayer.getWeights().add(ihDeltaWeights);
-        hiddenLayer.getBiases().add(hGradient);
+        outputLayer.backpropagate(outputErrors, learnRate);
 
         //System.out.println("guess - " + guess.getValue(0, 0) + " | expected: " + expected.getValue(0, 0));
     }

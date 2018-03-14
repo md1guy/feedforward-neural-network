@@ -8,7 +8,8 @@ public class NeuralNetwork {
     private Layer inputLayer;
     private Layer[] hiddenLayers;
     private Layer outputLayer;
-    private double learnRate = 0.1;
+    private double learnRate;
+    Activation activation;
 
     public NeuralNetwork(int inputLayerNeuronsCount, int[] hiddenLayersNeuronsCounts, int outputLayerNeuronsCount) {
 
@@ -26,6 +27,69 @@ public class NeuralNetwork {
         }
 
         outputLayer = new Layer(outputLayerNeuronsCount, hiddenLayers[hiddenLayersNeuronsCounts.length - 1]);
+
+        learnRate = 0.1;
+
+        setActivation("sigmoid");
+    }
+
+    public NeuralNetwork(int inputLayerNeuronsCount, int[] hiddenLayersNeuronsCounts, int outputLayerNeuronsCount, String activation) {
+
+        this.inputLayerNeuronsCount = inputLayerNeuronsCount;
+        this.outputLayerNeuronsCount = outputLayerNeuronsCount;
+
+        inputLayer = new Layer(inputLayerNeuronsCount);
+        hiddenLayers = new Layer[hiddenLayersNeuronsCounts.length];
+        hiddenLayers[0] = new Layer(hiddenLayersNeuronsCounts[0], inputLayer);
+
+        if(hiddenLayers.length > 1) {
+            for (int i = 1; i < hiddenLayers.length; i++) {
+                hiddenLayers[i] = new Layer(hiddenLayersNeuronsCounts[i], hiddenLayers[i - 1]);
+            }
+        }
+
+        outputLayer = new Layer(outputLayerNeuronsCount, hiddenLayers[hiddenLayersNeuronsCounts.length - 1]);
+
+        learnRate = 0.1;
+
+        setActivation(activation);
+    }
+
+    public NeuralNetwork(int inputLayerNeuronsCount, int hiddenLayersNeuronsCounts, int outputLayerNeuronsCount) {
+
+        this.inputLayerNeuronsCount = inputLayerNeuronsCount;
+        this.outputLayerNeuronsCount = outputLayerNeuronsCount;
+
+        inputLayer = new Layer(inputLayerNeuronsCount);
+        hiddenLayers = new Layer[1];
+        hiddenLayers[0] = new Layer(hiddenLayersNeuronsCounts, inputLayer);
+
+        outputLayer = new Layer(outputLayerNeuronsCount, hiddenLayers[0]);
+
+        learnRate = 0.1;
+
+        setActivation("sigmoid");
+    }
+
+    public NeuralNetwork(int inputLayerNeuronsCount, int hiddenLayersNeuronsCounts, int outputLayerNeuronsCount, String activation) {
+
+        this.inputLayerNeuronsCount = inputLayerNeuronsCount;
+        this.outputLayerNeuronsCount = outputLayerNeuronsCount;
+
+        inputLayer = new Layer(inputLayerNeuronsCount);
+        hiddenLayers = new Layer[1];
+        hiddenLayers[0] = new Layer(hiddenLayersNeuronsCounts, inputLayer);
+
+        outputLayer = new Layer(outputLayerNeuronsCount, hiddenLayers[0]);
+
+        learnRate = 0.1;
+
+        setActivation(activation);
+    }
+
+    public void setActivation(String activation) {
+        this.activation = Activation.getInstance();
+        this.activation.setActivationFunction(activation);
     }
 
     public void setLearnRate(double learnRate) {
@@ -70,6 +134,26 @@ public class NeuralNetwork {
         //System.out.println("guess - " + guess.getValue(0, 0) + " | expected: " + expected.getValue(0, 0));
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

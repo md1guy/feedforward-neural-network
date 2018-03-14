@@ -71,7 +71,7 @@ public class Layer {
         inputs = prevLayer.getOutputs();
         outputs = mul(weights, inputs);
         outputs.add(biases);
-        outputs.map(sigm);
+        outputs.map(Activation.getInstance().getActivation());
     }
 
     void backpropagate(Matrix errors, double learnRate) {
@@ -79,7 +79,7 @@ public class Layer {
 
         this.errors = errors;
 
-        Matrix gradient = map(outputs, dsigm);
+        Matrix gradient = map(outputs, Activation.getInstance().getDeactivation());
         gradient = hadm(gradient, errors);
         gradient = scale(gradient, learnRate);
 
